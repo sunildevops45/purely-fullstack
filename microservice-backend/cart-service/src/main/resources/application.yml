@@ -3,7 +3,7 @@ spring:
         name: cart-service
     data:
         mongodb:
-            host: 127.0.0.1
+            uri: mongodb://raju:rajureddy98@ac-httvetd-shard-00-00.7s1vkpd.mongodb.net:27017,ac-httvetd-shard-00-01.7s1vkpd.mongodb.net:27017,ac-httvetd-shard-00-02.7s1vkpd.mongodb.net:27017/?ssl=true&retryWrites=true&w=majority
             port: 27017
             database: purely_cart_service
     jpa:

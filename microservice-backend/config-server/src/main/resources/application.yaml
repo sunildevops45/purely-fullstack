@@ -1,0 +1,11 @@
+server:
+  port: 8888
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/purely-fullstack/configs
+          default-label: main
+          clone-on-start: true

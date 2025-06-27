@@ -76,10 +76,11 @@ public class AuthServiceImpl implements AuthService {
 
             if (savedUser.getId() != null) {
                 try {
-                    sendRegistrationVerificationEmail(user);;
-                }catch (Exception e) {
+                    sendRegistrationVerificationEmail(user);
+                } catch (Exception e) {
+                    log.error("Email sending failed: {}", e.getMessage(), e); // full stacktrace
                     removeDisabledUser(savedUser.getId());
-                    throw new ServiceLogicException("Failed to send verification email.Recheck your email or try again later!");
+                    throw new ServiceLogicException("Failed to send verification email. Reason: " + e.getMessage());
                 }
             }
 

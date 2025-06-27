@@ -23,37 +23,38 @@ public class EmailNotificationService implements NotificationService {
     private String fromMail;
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> sendEmail(MailRequestDto requestDto) {
-        try {
-            String toAddress = requestDto.getTo();
-            String fromAddress = fromMail;
-            String senderName = "Purely";
-            String subject = requestDto.getSubject();
-            String content = requestDto.getBody();
+public ResponseEntity<ApiResponseDto<?>> sendEmail(MailRequestDto requestDto) {
+    String toAddress = requestDto.getTo();       // Move outside try
+    String fromAddress = fromMail;
+    String subject = requestDto.getSubject();    // Optional: move if needed
+    String content = requestDto.getBody();
 
-            MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message);
+    try {
+        String senderName = "Purely";
 
-            helper.setFrom(fromAddress, senderName);
-            helper.setTo(toAddress);
-            helper.setSubject(subject);
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
 
-            helper.setText(content, true);
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+        helper.setText(content, true);
 
-            javaMailSender.send(message);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(ApiResponseDto.builder()
-                            .isSuccess(true)
-                            .response("Successfully sent email!")
-                            .build());
-        }catch (Exception e) {
-            log.error("Failed to send email: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponseDto.builder()
-                            .isSuccess(false)
-                            .response("Unable to send email!")
-                            .build());
-        }
+        javaMailSender.send(message);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponseDto.builder()
+                        .isSuccess(true)
+                        .response("Successfully sent email!")
+                        .build());
+    } catch (Exception e) {
+        log.error("❌ Failed to send email\nFrom: {}\nTo: {}\nError: {}", fromAddress, toAddress, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponseDto.builder()
+                        .isSuccess(false)
+                        .response("Unable to send email!")
+                        .build());
     }
-
 }
+}
+
