@@ -15,7 +15,7 @@ spec:
         app: order-service-app
     spec:
       containers:
-      - name: norder-service-app
+      - name: order-service-app
         image: sunildevops1/order-service:33
         ports:
           - containerPort: 9070
