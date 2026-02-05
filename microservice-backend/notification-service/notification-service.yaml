@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service-app
+  labels:
+    app: notification-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service-app
+  template:
+    metadata:
+      labels:
+        app: notification-service-app
+    spec:
+      containers:
+      - name: notification-service
+        image: sunildevops1/notification-service:32
+        ports:
+          - containerPort: 9020
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service-service
+  labels:
+    app: notification-service
+spec:
+  type: ClusterIP
+  selector:
+    app: notification-service
+  ports:
+  - protocol: TCP
+    port: 9020
+    targetPort: 9020
