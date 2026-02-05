@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api-gateway-app
-        image: sunildevops1/frontend:26
+        image: sunildevops1/api-gateway:27
         ports:
           - containerPort: 8080
         imagePullPolicy: Always
