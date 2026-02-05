@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-server-app
+  labels:
+    app: config-server-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-server-app
+  template:
+    metadata:
+      labels:
+        app: config-server-app
+    spec:
+      containers:
+      - name: config-server-app
+        image: sunildevops1/config-server:31
+        ports:
+          - containerPort: 8888
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-server-app-service
+  labels:
+    app: config-server-app
+spec:
+  type: ClusterIP
+  selector:
+    app: config-server-app
+  ports:
+  - protocol: TCP
+    port: 8888
+    targetPort: 8888
