@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service-app
+  labels:
+    app: order-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service-app
+  template:
+    metadata:
+      labels:
+        app: order-service-app
+    spec:
+      containers:
+      - name: norder-service-app
+        image: sunildevops1/order-service:33
+        ports:
+          - containerPort: 9070
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service-app-service
+  labels:
+    app: order-service-app
+spec:
+  type: ClusterIP
+  selector:
+    app: order-service-app
+  ports:
+  - protocol: TCP
+    port: 9070
+    targetPort: 9070
