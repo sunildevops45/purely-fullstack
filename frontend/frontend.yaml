@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: bfrontend-app
+        app: frontend-app
     spec:
       containers:
       - name: frontend-app
