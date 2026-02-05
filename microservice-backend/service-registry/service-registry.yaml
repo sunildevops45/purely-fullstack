@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: service-registry-app
-        image: sunildevops1/product-service:34
+        image: sunildevops1/service-registry:35
         ports:
           - containerPort: 8761
         imagePullPolicy: Always
