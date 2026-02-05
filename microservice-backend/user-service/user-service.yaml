@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service-app
+  labels:
+    app: user-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service-app
+  template:
+    metadata:
+      labels:
+        app: user-service-app
+    spec:
+      containers:
+      - name: user-service-app
+        image: sunildevops1/product-service:34
+        ports:
+          - containerPort: 9050
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service-app-service
+  labels:
+    app: user-service-app
+spec:
+  type: ClusterIP
+  selector:
+    app: user-service-app
+  ports:
+  - protocol: TCP
+    port: 9050
+    targetPort: 9050
