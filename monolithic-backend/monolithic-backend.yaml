@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monolithic-backend
+  labels:
+    app: monolithic-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monolithic-backend
+  template:
+    metadata:
+      labels:
+        app: monolithic-backend
+    spec:
+      containers:
+      - name: monolithic-backend
+        image: sunildevops1/monolithic-backend:41
+        ports:
+          - containerPort: 8081
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monolithic-backend-service
+  labels:
+    app: monolithic-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: monolithic-backend
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
