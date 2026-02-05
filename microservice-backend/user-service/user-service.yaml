@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: user-service-app
-        image: sunildevops1/product-service:34
+        image: sunildevops1/user-service:36
         ports:
           - containerPort: 9050
         imagePullPolicy: Always
