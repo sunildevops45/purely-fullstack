@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'mvn'
+        nodejs 'node16'
+    }
+
+    parameters {
+        choice(
+            name: 'Services',
+            choices: ['frontend','api-gateway','auth-service','cart-service','category-service','config-server','notification-service','order-service','product-service','service-registry','user-service','monolithic-backend'],
+            description: 'Select the service to build'
+        )
+    }
+	environment {
+			DOCKER_REGISTRY = "sunildevops1"
+			IMAGE_TAG = "${BUILD_NUMBER}"
+		}
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',url: 'https://github.com/sunildevops45/purely-fullstack.git'
+            }
+        }
+
+        stage('Build Service') {
+            steps {
+                script {
+                    if (params.Services == 'frontend') {
+                        sh """
+                            cd ${params.Services}
+                            npm install
+                            npm run build
+                        """
+                    }
+                    else if (params.Services == 'monolithic-backend') {
+                        sh """
+                            cd ${params.Services}
+                            mvn clean package
+                        """
+                    }
+                    else {
+                        sh """
+                            cd microservice-backend/${params.Services}
+                            mvn clean package -DskipTests
+                        """
+                    }
+                }
+            }
+        }
+		stage('Docker Build & Push') {
+				steps {
+					script {
+						withCredentials([
+							usernamePassword(credentialsId: 'dockerhub-creds',usernameVariable: 'DOCKER_USER',passwordVariable: 'DOCKER_PASS')
+						]) {
+						if (params.Services == 'frontend' || params.Services == 'monolithic-backend') {
+							sh """
+								cd ${params.Services}
+								echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+								docker build -t ${DOCKER_REGISTRY}/${params.Services}:${IMAGE_TAG} .
+								docker push ${DOCKER_REGISTRY}/${params.Services}:${IMAGE_TAG}
+								docker logout
+							"""
+							}
+						else {
+						sh """
+								cd microservice-backend/${params.Services}
+								echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+								docker build -t ${DOCKER_REGISTRY}/${params.Services}:${IMAGE_TAG} .
+								docker push ${DOCKER_REGISTRY}/${params.Services}:${IMAGE_TAG}
+								docker logout
+							"""
+							}
+						}
+					}
+				}
+			}
+    }
+}
