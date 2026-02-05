@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: category-service-app
+  labels:
+    app: category-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: category-service-app
+  template:
+    metadata:
+      labels:
+        app: category-service-app
+    spec:
+      containers:
+      - name: category-service-app
+        image: sunildevops1/category-service:30
+        ports:
+          - containerPort: 9000
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: category-service-app-service
+  labels:
+    app: category-service-app
+spec:
+  type: ClusterIP
+  selector:
+    app: category-service-app
+  ports:
+  - protocol: TCP
+    port: 9000
+    targetPort: 9000
