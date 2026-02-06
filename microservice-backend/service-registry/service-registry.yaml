@@ -28,7 +28,7 @@ metadata:
   labels:
     app: service-registry-app
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: service-registry-app
   ports:
