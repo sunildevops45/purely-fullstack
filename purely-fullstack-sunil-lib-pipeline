@@ -1,0 +1,85 @@
+@Library('jenkins-shared-lib') _
+
+pipeline {
+    agent any
+
+    tools {
+        maven 'mvn'
+        nodejs 'nodejs 16'
+    }
+
+    parameters {
+        choice(
+            name: 'Services',
+            choices: ['frontend','api-gateway','auth-service','cart-service','category-service','config-server','notification-service','order-service','product-service','service-registry','user-service','monolithic-backend'],
+            description: 'Select the service to build'
+        )
+		string(
+				name: 'IMAGE_TAG',
+				defaultValue: '',
+				description: 'Docker image tag'
+			)
+    }
+
+    environment {
+        REGISTRY = "sunildevops1"
+        TAG = "${params.IMAGE_TAG}"
+        SERVICE = "${params.Services}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkoutStage(
+                    'main',
+                    'https://github.com/sunildevops45/purely-fullstack.git'
+                )
+            }
+        }
+
+        stage('Build Service') {
+            steps {
+                script {
+                    if (env.SERVICE == 'frontend') {
+                        dir(env.SERVICE) {
+                            buildNode()
+                        }
+                    }
+                    else if (env.SERVICE == 'monolithic-backend') {
+                        dir(env.SERVICE) {
+                            buildMaven()
+                        }
+                    }
+                    else {
+                        dir("microservice-backend/${env.SERVICE}") {
+                            buildMaven()
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                script {
+
+                    if (env.SERVICE == 'frontend' || env.SERVICE == 'monolithic-backend') {
+
+                        dir(env.SERVICE) {
+                            dockerStage(env.REGISTRY, env.SERVICE, env.TAG)
+                        }
+
+                    }
+                    else {
+
+                        dir("microservice-backend/${env.SERVICE}") {
+                            dockerStage(env.REGISTRY, env.SERVICE, env.TAG)
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}
